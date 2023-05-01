@@ -14,6 +14,7 @@ Snuffles are fluffy mobs with a big tongue found in snowy biomes with unique fro
 If a Snuffle is warm, it can turn frosty again by being in the open when it is snowing or by walking into powder snow. This can be seen here.
 
 Slimeballs can be used on them to cycle through 4 hairstyles.
+
 ![ ](screenshots/screenshot-2022-01-14-014859.png)
 
 ![ ](screenshots/screenshot-2022-01-14-015222.png)
