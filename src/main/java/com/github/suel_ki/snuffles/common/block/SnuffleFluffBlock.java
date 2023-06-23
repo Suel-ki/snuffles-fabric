@@ -1,10 +1,12 @@
 package com.github.suel_ki.snuffles.common.block;
 
 import com.github.suel_ki.snuffles.core.registry.SnufflesBlocks;
+import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
@@ -39,6 +41,12 @@ public class SnuffleFluffBlock extends Block {
     @Override
     public void onLandedUpon(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
         super.onLandedUpon(world, state, pos, entity, fallDistance * 0.5F);
+    }
+
+    @Override
+    public float calcBlockBreakingDelta(BlockState state, PlayerEntity player, BlockView world, BlockPos pos) {
+        float original = super.calcBlockBreakingDelta(state, player, world, pos);
+        return player.getMainHandStack().isIn(ConventionalItemTags.SHEARS) ? original * 5.0F : original;
     }
 
     @Override
