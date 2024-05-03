@@ -6,7 +6,7 @@ import io.github.suel_ki.snuffles.core.registry.SnufflesParticleTypes;
 import io.github.suel_ki.snuffles.core.registry.SnufflesSoundEvents;
 import io.github.suel_ki.snuffles.core.tags.SnufflesBlockTags;
 import io.github.suel_ki.snuffles.core.tags.SnufflesItemTags;
-import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityData;
@@ -95,13 +95,13 @@ public class Snuffle extends AnimalEntity implements Shearable {
      */
 
     @Override
-    protected void initDataTracker() {
-        super.initDataTracker();
-        this.dataTracker.startTracking(FROST_COUNTER, 0);
-        this.dataTracker.startTracking(DATA_HAIRSTYLE_ID, 0);
-        this.dataTracker.startTracking(DATA_FLUFF, false);
-        this.dataTracker.startTracking(DATA_FROSTY, false);
-        this.dataTracker.startTracking(IS_LICKING, false);
+    protected void initDataTracker(DataTracker.Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(FROST_COUNTER, 0);
+        builder.add(DATA_HAIRSTYLE_ID, 0);
+        builder.add(DATA_FLUFF, false);
+        builder.add(DATA_FROSTY, false);
+        builder.add(IS_LICKING, false);
     }
 
     @Override
@@ -232,11 +232,11 @@ public class Snuffle extends AnimalEntity implements Shearable {
             }
 
             return ActionResult.success(this.getWorld().isClient);
-        } else  if (stack.isIn(ConventionalItemTags.SHEARS)) {
+        } else  if (stack.isIn(ConventionalItemTags.SHEARS_TOOLS)) {
             if (!this.getWorld().isClient() && this.isShearable()) {
                 this.sheared(SoundCategory.PLAYERS);
                 this.emitGameEvent(GameEvent.SHEAR, player);
-                stack.damage(1, player, (playerx) -> playerx.sendToolBreakStatus(hand));
+                stack.damage(1, player, getSlotForHand(hand));
 
                 return ActionResult.SUCCESS;
             }
@@ -320,7 +320,7 @@ public class Snuffle extends AnimalEntity implements Shearable {
     }
 
     @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnType, @Nullable EntityData groupData, @Nullable NbtCompound compound) {
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnType, @Nullable EntityData groupData) {
         boolean frosty = getWorld().getBiome(this.getBlockPos()).value().isCold(this.getBlockPos());
 
         if (groupData instanceof SnuffleGroupData)
@@ -335,7 +335,7 @@ public class Snuffle extends AnimalEntity implements Shearable {
             this.setFluff(true);
 
         this.setFrosty(frosty);
-        return super.initialize(world, difficulty, spawnType, groupData, compound);
+        return super.initialize(world, difficulty, spawnType, groupData);
     }
 
     /*
