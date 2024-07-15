@@ -8,7 +8,7 @@ import io.github.suel_ki.snuffles.core.Snuffles;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
-import net.minecraft.block.enums.Instrument;
+import net.minecraft.block.enums.NoteBlockInstrument;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
@@ -19,7 +19,7 @@ public class SnufflesBlocks {
                     .ticksRandomly().strength(0.6F)
                     .sounds(BlockSoundGroup.WOOL));
     public static final Block FROSTY_FLUFF = new FrostyFluffBlock(
-            AbstractBlock.Settings.create().mapColor(MapColor.WHITE).instrument(Instrument.GUITAR)
+            AbstractBlock.Settings.create().mapColor(MapColor.WHITE).instrument(NoteBlockInstrument.GUITAR)
                     .strength(0.6F).sounds(BlockSoundGroup.WOOL));
     public static final Block SNUFFLE_FLUFF_CARPET = new SnuffleFluffCarpetBlock(
             AbstractBlock.Settings.create().mapColor(MapColor.WHITE)

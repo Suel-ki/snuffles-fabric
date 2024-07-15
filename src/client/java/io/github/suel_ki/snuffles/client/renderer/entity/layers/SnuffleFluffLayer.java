@@ -13,6 +13,7 @@ import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.apache.commons.lang3.tuple.Pair;
+import org.joml.Vector3f;
 
 public class SnuffleFluffLayer<T extends Snuffle, M extends SnuffleModel<T>> extends FeatureRenderer<T, M> {
 
@@ -40,13 +41,21 @@ public class SnuffleFluffLayer<T extends Snuffle, M extends SnuffleModel<T>> ext
                 boolean flag = minecraft.hasOutline(snuffle);
                 if (flag) {
                     VertexConsumer vertexconsumer = buffer.getBuffer(RenderLayer.getOutline(this.getTextureLocation(snuffle)));
-                    this.getContextModel().render(matrixStack, vertexconsumer, packedLight, LivingEntityRenderer.getOverlay(snuffle, 0.0F), 0.0F, 0.0F, 0.0F, 1.0F);
+                    this.getContextModel().render(matrixStack, vertexconsumer, packedLight, LivingEntityRenderer.getOverlay(snuffle, 0.0F), packRGB(new Vector3f(0.0F, 0.0F, 0.0F)));
                 }
             } else {
                 VertexConsumer vertexconsumer = buffer.getBuffer(RenderLayer.getEntityCutoutNoCull(this.getTextureLocation(snuffle)));
-                this.getContextModel().render(matrixStack, vertexconsumer, packedLight, LivingEntityRenderer.getOverlay(snuffle, 0.0F), 1.0F, 1.0F, 1.0F, 1.0F);
+                this.getContextModel().render(matrixStack, vertexconsumer, packedLight, LivingEntityRenderer.getOverlay(snuffle, 0.0F), packRGB(new Vector3f(1.0F, 1.0F, 1.0F)));
             }
         }
+    }
+
+    static int packRGB(Vector3f color) {
+        int red = (int) (color.x() * 255.0F);
+        int green = (int) (color.y() * 255.0F);
+        int blue = (int) (color.z() * 255.0F);
+
+        return (red << 16) | (green << 8) | blue;
     }
 
     public Identifier getTextureLocation(Snuffle snuffle) {

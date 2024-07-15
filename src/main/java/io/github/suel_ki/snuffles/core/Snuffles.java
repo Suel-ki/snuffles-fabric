@@ -34,6 +34,6 @@ public class Snuffles implements ModInitializer {
     }
 
     public static Identifier id(String id) {
-        return new Identifier(MOD_ID, id);
+        return Identifier.of(MOD_ID, id);
     }
 }

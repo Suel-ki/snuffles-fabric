@@ -5,7 +5,7 @@ import net.minecraft.client.particle.ParticleFactory;
 import net.minecraft.client.particle.SnowflakeParticle;
 import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.util.math.BlockPos;
 
 public class SnufflesSnowflakeParticle extends SnowflakeParticle {
@@ -29,14 +29,14 @@ public class SnufflesSnowflakeParticle extends SnowflakeParticle {
             this.age++;
     }
 
-    public static class Factory implements ParticleFactory<DefaultParticleType> {
+    public static class Factory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
 
         public Factory(SpriteProvider spriteProvider) {
             this.spriteProvider = spriteProvider;
         }
 
-        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+        public Particle createParticle(SimpleParticleType defaultParticleType, ClientWorld world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
             return new SnufflesSnowflakeParticle(world, x, y, z, xSpeed, ySpeed, zSpeed, this.spriteProvider);
         }
     }

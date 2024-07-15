@@ -32,8 +32,8 @@ public class SnufflesShearsDispenseItemBehavior {
                         snuffle.sheared(SoundCategory.BLOCKS);
                         worldIn.emitGameEvent(null, GameEvent.SHEAR, pos);
 
-                        if (stack.damage(1, worldIn.getRandom(), null))
-                            stack.setCount(0);
+                        stack.damage(1, worldIn, null, null);
+
                         this.setSuccess(true);
                         return stack;
                     }
