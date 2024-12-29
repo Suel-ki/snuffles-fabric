@@ -53,6 +53,6 @@ public class SnuffleFluffCarpetBlock extends CarpetBlock {
         else if (world.getTopPosition(Heightmap.Type.MOTION_BLOCKING, pos).getY() > pos.getY())
             return false;
         else
-            return world.getBiome(pos).value().isCold(pos);
+            return world.getBiome(pos).value().isCold(pos, world.getSeaLevel());
     }
 }

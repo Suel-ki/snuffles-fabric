@@ -1,8 +1,6 @@
 {
   "type": "minecraft:smelting",
-  "ingredient": {
-    "item": "snuffles:frosty_fluff"
-  },
+  "ingredient": "snuffles:frosty_fluff",
   "result": {
     "id" : "snuffles:snuffle_fluff"
   },

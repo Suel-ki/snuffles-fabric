@@ -1,7 +1,7 @@
 package io.github.suel_ki.snuffles.common.block;
 
 import io.github.suel_ki.snuffles.core.registry.SnufflesBlocks;
-import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
@@ -46,7 +46,7 @@ public class SnuffleFluffBlock extends Block {
     @Override
     public float calcBlockBreakingDelta(BlockState state, PlayerEntity player, BlockView world, BlockPos pos) {
         float original = super.calcBlockBreakingDelta(state, player, world, pos);
-        return player.getMainHandStack().isIn(ConventionalItemTags.SHEARS) ? original * 5.0F : original;
+        return player.getMainHandStack().isIn(ConventionalItemTags.SHEAR_TOOLS) ? original * 5.0F : original;
     }
 
     @Override
@@ -68,6 +68,6 @@ public class SnuffleFluffBlock extends Block {
         else if (world.getTopPosition(Heightmap.Type.MOTION_BLOCKING, pos).getY() > pos.getY())
             return false;
         else
-            return world.getBiome(pos).value().isCold(pos);
+            return world.getBiome(pos).value().isCold(pos, world.getSeaLevel());
     }
 }

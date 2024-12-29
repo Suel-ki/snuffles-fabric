@@ -29,7 +29,7 @@ public class SnufflesShearsDispenseItemBehavior {
                 BlockPos pos = pointer.pos().offset(pointer.state().get(DispenserBlock.FACING));
                 for (Snuffle snuffle : worldIn.getEntitiesByClass(Snuffle.class, new Box(pos), EntityPredicates.EXCEPT_SPECTATOR)) {
                     if (snuffle.isShearable()) {
-                        snuffle.sheared(SoundCategory.BLOCKS);
+                        snuffle.sheared(worldIn, SoundCategory.BLOCKS, stack);
                         worldIn.emitGameEvent(null, GameEvent.SHEAR, pos);
 
                         stack.damage(1, worldIn, null, null);

@@ -1,9 +1,8 @@
 package io.github.suel_ki.snuffles.client.renderer.entity.layers;
 
 import io.github.suel_ki.snuffles.client.model.SnuffleModel;
-import io.github.suel_ki.snuffles.common.entity.animal.Snuffle;
+import io.github.suel_ki.snuffles.client.renderer.entity.state.SnuffleEntityRenderState;
 import io.github.suel_ki.snuffles.core.Snuffles;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -15,7 +14,7 @@ import net.minecraft.util.Identifier;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Vector3f;
 
-public class SnuffleFluffLayer<T extends Snuffle, M extends SnuffleModel<T>> extends FeatureRenderer<T, M> {
+public class SnuffleFluffLayer<T extends SnuffleEntityRenderState, M extends SnuffleModel> extends FeatureRenderer<T, M> {
 
     private static final Pair<Identifier, Identifier> FLUFF = Pair.of(
             Snuffles.id("textures/entity/snuffle/snuffle_fluff.png"),
@@ -34,18 +33,18 @@ public class SnuffleFluffLayer<T extends Snuffle, M extends SnuffleModel<T>> ext
         super(parent);
     }
 
-    public void render(MatrixStack matrixStack, VertexConsumerProvider buffer, int packedLight, T snuffle, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-        if (!snuffle.isBaby() && snuffle.hasFluff()) {
-            if (snuffle.isInvisible()) {
-                MinecraftClient minecraft = MinecraftClient.getInstance();
-                boolean flag = minecraft.hasOutline(snuffle);
+    @Override
+    public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T state, float limbAngle, float limbDistance) {
+        if (!state.baby && state.fluff) {
+            if (state.invisible) {
+                boolean flag = state.hasOutline;
                 if (flag) {
-                    VertexConsumer vertexconsumer = buffer.getBuffer(RenderLayer.getOutline(this.getTextureLocation(snuffle)));
-                    this.getContextModel().render(matrixStack, vertexconsumer, packedLight, LivingEntityRenderer.getOverlay(snuffle, 0.0F), packRGB(new Vector3f(0.0F, 0.0F, 0.0F)));
+                    VertexConsumer vertexconsumer = vertexConsumers.getBuffer(RenderLayer.getOutline(this.getTextureLocation(state)));
+                    this.getContextModel().render(matrices, vertexconsumer, light, LivingEntityRenderer.getOverlay(state, 0.0F), packRGB(new Vector3f(0.0F, 0.0F, 0.0F)));
                 }
             } else {
-                VertexConsumer vertexconsumer = buffer.getBuffer(RenderLayer.getEntityCutoutNoCull(this.getTextureLocation(snuffle)));
-                this.getContextModel().render(matrixStack, vertexconsumer, packedLight, LivingEntityRenderer.getOverlay(snuffle, 0.0F), packRGB(new Vector3f(1.0F, 1.0F, 1.0F)));
+                VertexConsumer vertexconsumer = vertexConsumers.getBuffer(RenderLayer.getEntityCutoutNoCull(this.getTextureLocation(state)));
+                this.getContextModel().render(matrices, vertexconsumer, light, LivingEntityRenderer.getOverlay(state, 0.0F), packRGB(new Vector3f(1.0F, 1.0F, 1.0F)));
             }
         }
     }
@@ -58,13 +57,13 @@ public class SnuffleFluffLayer<T extends Snuffle, M extends SnuffleModel<T>> ext
         return (red << 16) | (green << 8) | blue;
     }
 
-    public Identifier getTextureLocation(Snuffle snuffle) {
+    public Identifier getTextureLocation(SnuffleEntityRenderState state) {
         Pair<Identifier, Identifier> fluff;
-        switch (snuffle.getHairstyle()) {
+        switch (state.hairstyle) {
             case HORSESHOE -> fluff = FLUFF_HORSESHOE;
             case SHEEPDOG -> fluff = FLUFF_SHEEPDOG;
             default -> fluff = FLUFF;
         }
-        return snuffle.isFrosty() ? fluff.getRight() : fluff.getLeft();
+        return state.frosty ? fluff.getRight() : fluff.getLeft();
     }
 }

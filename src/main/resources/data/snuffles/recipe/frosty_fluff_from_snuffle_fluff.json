@@ -6,12 +6,8 @@
     "###"
   ],
   "key": {
-    "#": {
-      "item": "snuffles:snuffle_fluff"
-    },
-    "X": {
-      "item": "minecraft:powder_snow_bucket"
-    }
+    "#": "snuffles:snuffle_fluff",
+    "X": "minecraft:powder_snow_bucket"
   },
   "result": {
     "id": "snuffles:frosty_fluff",

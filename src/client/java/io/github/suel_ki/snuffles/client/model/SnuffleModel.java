@@ -1,15 +1,13 @@
 package io.github.suel_ki.snuffles.client.model;
 
-import io.github.suel_ki.snuffles.common.entity.animal.Snuffle;
+import io.github.suel_ki.snuffles.client.renderer.entity.state.SnuffleEntityRenderState;
 import io.github.suel_ki.snuffles.core.config.SnufflesConfig;
-import com.google.common.collect.ImmutableList;
 import net.minecraft.client.model.*;
-import net.minecraft.client.render.entity.model.AnimalModel;
+import net.minecraft.client.render.entity.model.EntityModel;
+import net.minecraft.client.render.entity.model.ModelTransformer;
 import net.minecraft.util.math.MathHelper;
 
-import java.util.Collections;
-
-public class SnuffleModel<T extends Snuffle> extends AnimalModel<T> {
+public class SnuffleModel extends EntityModel<SnuffleEntityRenderState> {
     private final ModelPart body;
     private final ModelPart hump;
     private final ModelPart tongue;
@@ -19,7 +17,10 @@ public class SnuffleModel<T extends Snuffle> extends AnimalModel<T> {
     private final ModelPart rightHindLeg;
     private final ModelPart leftHindLeg;
 
+    public static final ModelTransformer BABY_TRANSFORMER = ModelTransformer.scaling(0.6F);
+
     public SnuffleModel(ModelPart part) {
+        super(part);
         this.body = part.getChild("body");
         this.hump = this.body.getChild("hump");
         this.tongue = this.body.getChild("tongue");
@@ -30,7 +31,7 @@ public class SnuffleModel<T extends Snuffle> extends AnimalModel<T> {
         this.leftHindLeg = part.getChild("left_hind_leg");
     }
 
-    public static TexturedModelData getTexturedModelData() {
+    public static TexturedModelData getTexturedModelData(boolean baby) {
         ModelData modelData = new ModelData();
         ModelPartData modelPartData = modelData.getRoot();
         ModelPartData body = modelPartData.addChild("body", ModelPartBuilder.create(), ModelTransform.of(0.0F, 14.0F, 0.0F, -0.0436F, 0.0F, 0.0F));
@@ -50,31 +51,21 @@ public class SnuffleModel<T extends Snuffle> extends AnimalModel<T> {
         modelPartData.addChild("left_front_leg", ModelPartBuilder.create().uv(0, 0).cuboid(-2.5F, 0.0F, -2.5F, 5.0F, 7.0F, 5.0F), ModelTransform.of(4.5F, 17.0F, -5.5F, 0.0F, -0.0873F, 0.0F));
         modelPartData.addChild("right_hind_leg", ModelPartBuilder.create().uv(0, 0).mirrored().cuboid(-2.5F, 0.0F, -2.5F, 5.0F, 7.0F, 5.0F), ModelTransform.of(-4.5F, 17.0F, 5.5F, 0.0F, 0.0873F, 0.0F));
         modelPartData.addChild("left_hind_leg", ModelPartBuilder.create().uv(0, 0).cuboid(-2.5F, 0.0F, -2.5F, 5.0F, 7.0F, 5.0F), ModelTransform.of(4.5F, 17.0F, 5.5F, 0.0F, -0.0873F, 0.0F));
-        return TexturedModelData.of(modelData, 128, 64);
+        TexturedModelData texturedModelData = TexturedModelData.of(modelData, 128, 64);
+        return baby? texturedModelData.transform(BABY_TRANSFORMER) : texturedModelData;
     }
 
-    @Override
-    protected Iterable<ModelPart> getHeadParts() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    protected Iterable<ModelPart> getBodyParts() {
-        return ImmutableList.of(this.body, this.rightFrontLeg, this.leftFrontLeg, this.rightHindLeg, this.leftHindLeg);
-    }
-
-    @Override
-    public void animateModel(Snuffle snuffle, float limbSwing, float limbSwingAmount, float partialTick) {
-        boolean flag = !snuffle.isBaby();
+    public void setAngles(SnuffleEntityRenderState state) {
+        super.setAngles(state);
+        float age = state.age;
+        float limbSwing = state.limbFrequency;
+        float limbSwingAmount = state.limbAmplitudeMultiplier;
+        boolean flag = !state.baby;
         this.horns.visible = flag;
         this.hump.visible = flag && !SnufflesConfig.INSTANCE.instance().legacy_snuffle_model;
-    }
-
-    @Override
-    public void setAngles(Snuffle snuffle, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        if (snuffle.isFrosting()) {
-            this.body.pitch = -0.0436F + 0.2F * MathHelper.sin(ageInTicks * 1.2F);
-            this.body.roll = 0.12F * MathHelper.cos(ageInTicks * 0.6F);
+        if (state.frosting) {
+            this.body.pitch = -0.0436F + 0.2F * MathHelper.sin(age * 1.2F);
+            this.body.roll = 0.12F * MathHelper.cos(age * 0.6F);
         } else {
             this.body.pitch = -0.0436F + 0.2F * MathHelper.sin(limbSwing * 0.6F) * limbSwingAmount;
             this.body.roll = 0.12F * MathHelper.cos(limbSwing * 0.2F) * limbSwingAmount;
@@ -90,10 +81,10 @@ public class SnuffleModel<T extends Snuffle> extends AnimalModel<T> {
         this.rightFrontLeg.roll = this.rightHindLeg.roll;
         this.leftFrontLeg.roll = this.leftHindLeg.roll;
 
-        if (snuffle.isLicking() || snuffle.isFrosting()) {
-            this.tongue.pitch = 0.3927F + MathHelper.sin(ageInTicks * 0.8F) * 0.2F;
+        if (state.licking || state.frosting) {
+            this.tongue.pitch = 0.3927F + MathHelper.sin(age * 0.8F) * 0.2F;
         } else {
-            this.tongue.pitch = 0.3927F + MathHelper.sin(ageInTicks * 0.12F) * 0.2F;
+            this.tongue.pitch = 0.3927F + MathHelper.sin(age * 0.12F) * 0.2F;
         }
     }
 }

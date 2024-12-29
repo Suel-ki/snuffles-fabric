@@ -19,9 +19,9 @@ public class Snuffles implements ModInitializer {
     public void onInitialize() {
         SnufflesConfig.INSTANCE.load();
 
-        SnufflesItems.init();
         SnufflesBlocks.init();
         SnufflesEntityTypes.init();
+        SnufflesItems.init();
         SnufflesParticleTypes.init();
         SnufflesSoundEvents.init();
 

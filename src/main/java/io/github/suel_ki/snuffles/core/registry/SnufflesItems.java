@@ -3,28 +3,42 @@ package io.github.suel_ki.snuffles.core.registry;
 import io.github.suel_ki.snuffles.common.item.FuelBlockItem;
 import io.github.suel_ki.snuffles.core.Snuffles;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.fabricmc.fabric.api.registry.FuelRegistry;
+import net.fabricmc.fabric.api.registry.FuelRegistryEvents;
+import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+
+import java.util.function.Function;
 
 public class SnufflesItems {
 
-    public static final Item SNUFFLE_FLUFF = new FuelBlockItem(SnufflesBlocks.SNUFFLE_FLUFF, 100, new Item.Settings());
-    public static final Item FROSTY_FLUFF = new BlockItem(SnufflesBlocks.FROSTY_FLUFF, new Item.Settings());
-    public static final Item SNUFFLE_FLUFF_CARPET = new FuelBlockItem(SnufflesBlocks.SNUFFLE_FLUFF_CARPET, 67,new Item.Settings());
-    public static final Item FROSTY_FLUFF_CARPET = new BlockItem(SnufflesBlocks.FROSTY_FLUFF_CARPET, new Item.Settings());
-    public static final Item SNUFFLE_SPAWN_EGG = new SpawnEggItem(SnufflesEntityTypes.SNUFFLE, 16777215, 7125720, new Item.Settings());
+    public static final Item SNUFFLE_FLUFF = registerFuelBlockItem("snuffle_fluff", SnufflesBlocks.SNUFFLE_FLUFF, 100);
+    public static final Item FROSTY_FLUFF = registerBlockItem("frosty_fluff",  SnufflesBlocks.FROSTY_FLUFF);
+    public static final Item SNUFFLE_FLUFF_CARPET = registerFuelBlockItem("snuffle_fluff_carpet", SnufflesBlocks.SNUFFLE_FLUFF_CARPET, 67);
+    public static final Item FROSTY_FLUFF_CARPET = registerBlockItem("frosty_fluff_carpet", SnufflesBlocks.FROSTY_FLUFF_CARPET);
+    public static final Item SNUFFLE_SPAWN_EGG = register("snuffle_spawn_egg", settings -> new SpawnEggItem(SnufflesEntityTypes.SNUFFLE, settings), new Item.Settings());
 
     public static void init() {
-        Registry.register(Registries.ITEM, Snuffles.id("snuffle_fluff"), SNUFFLE_FLUFF);
-        Registry.register(Registries.ITEM, Snuffles.id("frosty_fluff"), FROSTY_FLUFF);
-        Registry.register(Registries.ITEM, Snuffles.id("snuffle_fluff_carpet"), SNUFFLE_FLUFF_CARPET);
-        Registry.register(Registries.ITEM, Snuffles.id("frosty_fluff_carpet"), FROSTY_FLUFF_CARPET);
-        Registry.register(Registries.ITEM, Snuffles.id("snuffle_spawn_egg"), SNUFFLE_SPAWN_EGG);
+    }
+
+    private static <T extends Item> T register(String name, Function<Item.Settings, T> factory, Item.Settings settings) {
+        RegistryKey<Item> key = RegistryKey.of(RegistryKeys.ITEM, Snuffles.id(name));
+        T item = factory.apply(settings.registryKey(key));
+        return Registry.register(Registries.ITEM, key, item);
+    }
+
+    private static BlockItem registerBlockItem(String name, Block block) {
+        return register(name, settings -> new BlockItem(block, settings), new Item.Settings().useBlockPrefixedTranslationKey());
+    }
+
+    private static FuelBlockItem registerFuelBlockItem(String name, Block block, int burnTime) {
+        return register(name, settings -> new FuelBlockItem(block, burnTime, settings), new Item.Settings().useBlockPrefixedTranslationKey());
     }
 
     public static void addItemTooItemGroup() {
@@ -38,9 +52,10 @@ public class SnufflesItems {
     }
 
     public static void registerFuelTime() {
-        FuelRegistry fuelRegistry = FuelRegistry.INSTANCE;
-        fuelRegistry.add(SNUFFLE_FLUFF, 100);
-        fuelRegistry.add(SNUFFLE_FLUFF_CARPET, 67);
+        FuelRegistryEvents.BUILD.register((builder, context) -> {
+            builder.add(SNUFFLE_FLUFF, 100);
+            builder.add(SNUFFLE_FLUFF_CARPET, 67);
+        });
     }
 
 }

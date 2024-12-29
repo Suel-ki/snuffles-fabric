@@ -3,11 +3,7 @@
   "pattern": [
     "##"
   ],
-  "key": {
-    "#": {
-      "item": "snuffles:snuffle_fluff"
-    }
-  },
+  "key": "snuffles:snuffle_fluff",
   "result": {
     "id": "snuffles:snuffle_fluff_carpet",
     "count": 3

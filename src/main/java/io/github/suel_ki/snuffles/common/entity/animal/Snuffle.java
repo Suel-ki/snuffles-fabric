@@ -29,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.EntityTypeTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -65,10 +66,10 @@ public class Snuffle extends AnimalEntity implements Shearable {
     }
 
     public static DefaultAttributeContainer.Builder createSnuffleAttributes() {
-        return MobEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0D)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.2F)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 2.0D);
+        return AnimalEntity.createAnimalAttributes()
+                .add(EntityAttributes.MAX_HEALTH, 20.0D)
+                .add(EntityAttributes.MOVEMENT_SPEED, 0.2F)
+                .add(EntityAttributes.ATTACK_DAMAGE, 2.0D);
     }
 
     @Override
@@ -77,7 +78,7 @@ public class Snuffle extends AnimalEntity implements Shearable {
         this.goalSelector.add(0, new SnuffleClimbOnTopOfPowderSnowGoal(this, this.getWorld()));
         this.goalSelector.add(1, new EscapeDangerGoal(this, 1.5D));
         this.goalSelector.add(2, new AnimalMateGoal(this, 1.0D));
-        this.goalSelector.add(3, new SnuffleTemptGoal(1.1D, Ingredient.fromTag(SnufflesItemTags.SNUFFLE_FOOD), false));
+        this.goalSelector.add(3, new SnuffleTemptGoal(1.1D, Ingredient.fromTag(Registries.ITEM.getOptional(SnufflesItemTags.SNUFFLE_FOOD).orElseThrow()), false));
         this.goalSelector.add(4, new FollowParentGoal(this, 1.1D));
         this.goalSelector.add(5, new FrostGoal());
         this.goalSelector.add(6, new WanderAroundFarGoal(this, 1.0D));
@@ -205,7 +206,7 @@ public class Snuffle extends AnimalEntity implements Shearable {
         else if (getWorld().getTopPosition(Heightmap.Type.MOTION_BLOCKING, pos).getY() > pos.getY())
             return false;
         else
-            return getWorld().getBiome(pos).value().isCold(pos);
+            return getWorld().getBiome(pos).value().isCold(pos, world.getSeaLevel());
     }
 
     /*
@@ -223,7 +224,7 @@ public class Snuffle extends AnimalEntity implements Shearable {
                 this.playSound(SnufflesSoundEvents.SNUFFLE_STYLE, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
             }
 
-            return ActionResult.success(this.getWorld().isClient);
+            return ActionResult.SUCCESS;
         } else if (stack.isOf(Items.MAGMA_CREAM) && this.isFrosty()) {
             if (!this.getWorld().isClient()) {
                 this.setFrosty(false);
@@ -231,10 +232,10 @@ public class Snuffle extends AnimalEntity implements Shearable {
                 this.playSound(SnufflesSoundEvents.SNUFFLE_THAW, 0.7F, 1.6F + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);
             }
 
-            return ActionResult.success(this.getWorld().isClient);
-        } else  if (stack.isIn(ConventionalItemTags.SHEARS_TOOLS)) {
+            return ActionResult.SUCCESS;
+        } else  if (stack.isIn(ConventionalItemTags.SHEAR_TOOLS)) {
             if (!this.getWorld().isClient() && this.isShearable()) {
-                this.sheared(SoundCategory.PLAYERS);
+                this.sheared((ServerWorld) getWorld(), SoundCategory.PLAYERS, stack);
                 this.emitGameEvent(GameEvent.SHEAR, player);
                 stack.damage(1, player, getSlotForHand(hand));
 
@@ -296,11 +297,13 @@ public class Snuffle extends AnimalEntity implements Shearable {
      */
 
     @Override
-    public void sheared(SoundCategory shearedSoundCategory) {
+    public void sheared(ServerWorld world, SoundCategory shearedSoundCategory, ItemStack shears) {
+        if (this.getWorld().isClient())
+            return;
         this.getWorld().playSoundFromEntity(null, this, SnufflesSoundEvents.SNUFFLE_SHEAR, shearedSoundCategory, 1.0F, 1.0F);
         this.setFluff(false);
         this.fluffGrowTime = 18000 + this.getRandom().nextInt(6000);
-        ItemEntity itemEntity = this.dropStack(new ItemStack(this.isFrosty() ? SnufflesBlocks.FROSTY_FLUFF : SnufflesBlocks.SNUFFLE_FLUFF), 1.0F);
+        ItemEntity itemEntity = this.dropStack((ServerWorld) this.getWorld(), new ItemStack(this.isFrosty() ? SnufflesBlocks.FROSTY_FLUFF : SnufflesBlocks.SNUFFLE_FLUFF), 1.0F);
         if (itemEntity != null) {
             itemEntity.setVelocity(itemEntity.getVelocity()
                     .add((
@@ -321,7 +324,7 @@ public class Snuffle extends AnimalEntity implements Shearable {
 
     @Override
     public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnType, @Nullable EntityData groupData) {
-        boolean frosty = getWorld().getBiome(this.getBlockPos()).value().isCold(this.getBlockPos());
+        boolean frosty = getWorld().getBiome(this.getBlockPos()).value().isCold(this.getBlockPos(), world.getSeaLevel());
 
         if (groupData instanceof SnuffleGroupData)
             frosty = ((SnuffleGroupData) groupData).frosty;
@@ -345,7 +348,7 @@ public class Snuffle extends AnimalEntity implements Shearable {
     @Nullable
     @Override
     public Snuffle createChild(ServerWorld world, PassiveEntity entity) {
-        return SnufflesEntityTypes.SNUFFLE.create(world);
+        return SnufflesEntityTypes.SNUFFLE.create(world, SpawnReason.BREEDING);
     }
 
     @Override

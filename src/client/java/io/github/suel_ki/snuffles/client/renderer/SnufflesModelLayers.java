@@ -7,9 +7,11 @@ import net.minecraft.client.render.entity.model.EntityModelLayer;
 
 public class SnufflesModelLayers {
     public static EntityModelLayer SNUFFLE = new EntityModelLayer(Snuffles.id("snuffle"), "main");
+    public static EntityModelLayer SNUFFLE_BABY = new EntityModelLayer(Snuffles.id("snuffle_baby"), "main");
 
     public static void registerLayers() {
-        EntityModelLayerRegistry.registerModelLayer(SNUFFLE, SnuffleModel::getTexturedModelData);
+        EntityModelLayerRegistry.registerModelLayer(SNUFFLE, () -> SnuffleModel.getTexturedModelData(false));
+        EntityModelLayerRegistry.registerModelLayer(SNUFFLE_BABY, () -> SnuffleModel.getTexturedModelData(true));
     }
 
 }

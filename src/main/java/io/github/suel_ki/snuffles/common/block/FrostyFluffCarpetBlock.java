@@ -12,8 +12,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -62,7 +62,7 @@ public class FrostyFluffCarpetBlock extends CarpetBlock {
     }
 
     @Override
-    public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hitResult) {
+    public ActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hitResult) {
         if (stack.isOf(Items.MAGMA_CREAM)) {
             if (!world.isClient()) {
                 if (!player.isCreative())
@@ -73,7 +73,7 @@ public class FrostyFluffCarpetBlock extends CarpetBlock {
                 world.playSound(null, pos, SnufflesSoundEvents.FROSTY_FLUFF_THAW, SoundCategory.BLOCKS, 0.7F, 1.6F + (world.random.nextFloat() - world.random.nextFloat()) * 0.4F);
             }
 
-            return ItemActionResult.success(world.isClient());
+            return ActionResult.SUCCESS;
         }
 
         return super.onUseWithItem(stack, state, world, pos, player, hand, hitResult);
