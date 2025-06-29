@@ -19,7 +19,7 @@ public class SnufflesEntityTypes {
 
     public static final EntityType<Snuffle> SNUFFLE = FabricEntityType.Builder.createMob(Snuffle::new, SpawnGroup.CREATURE,
                     (mob) -> mob.defaultAttributes(Snuffle::createSnuffleAttributes).spawnRestriction(SpawnLocationTypes.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, Snuffle::checkSnuffleSpawnRules))
-            .dimensions(1.2F, SnufflesConfig.INSTANCE.instance().legacy_snuffle_model ? 1.0F : 1.2F)
+            .dimensions(1.2F, SnufflesConfig.instance().legacy_snuffle_model ? 1.0F : 1.2F)
             .maxTrackingRange(8)
             .build(key);
 

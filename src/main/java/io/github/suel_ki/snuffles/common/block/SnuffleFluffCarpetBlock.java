@@ -2,6 +2,7 @@ package io.github.suel_ki.snuffles.common.block;
 
 
 import io.github.suel_ki.snuffles.core.registry.SnufflesBlocks;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CarpetBlock;
 import net.minecraft.block.ShapeContext;
@@ -18,6 +19,7 @@ public class SnuffleFluffCarpetBlock extends CarpetBlock {
     public SnuffleFluffCarpetBlock(Settings settings) {
         super(settings);
     }
+    private static final VoxelShape SHAPE = Block.createColumnShape(16.0, 0.0, 1.0);
 
     @Override
     public @NotNull VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {

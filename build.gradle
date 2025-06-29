@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.7.+'
+	id 'fabric-loom' version '1.10.+'
 	id 'maven-publish'
 }
 
@@ -20,17 +20,8 @@ repositories {
 		url = 'https://maven.terraformersmc.com/releases'
 	}
 	maven {
-		name = "isXander Maven"
-		url = "https://maven.isxander.dev/releases"
-	}
-	maven {
-		name = "Quiltmc Maven"
-		url = "https://maven.quiltmc.org/repository/release"
-	}
-	maven {
-		// temporary fix for a fix for YACL (twelvemonkeys imageio)
-		name "Twelvemonkeys imageio"
-		url "https://oss.sonatype.org/content/repositories/snapshots/"
+		name = "Shedaniel Maven"
+		url = 'https://maven.shedaniel.me/'
 	}
 }
 
@@ -53,7 +44,9 @@ dependencies {
 
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
 
-	modImplementation("dev.isxander:yet-another-config-lib:${yacl_version}-fabric")
+	modApi("me.shedaniel.cloth:cloth-config-fabric:${cloth_config_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
 }
 
 processResources {

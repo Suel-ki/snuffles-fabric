@@ -3,14 +3,15 @@ package io.github.suel_ki.snuffles.common.block;
 import io.github.suel_ki.snuffles.core.registry.SnufflesBlocks;
 import io.github.suel_ki.snuffles.core.registry.SnufflesParticleTypes;
 import io.github.suel_ki.snuffles.core.registry.SnufflesSoundEvents;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CarpetBlock;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCollisionHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -27,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class FrostyFluffCarpetBlock extends CarpetBlock {
     protected static final Box TOUCH_AABB = new Box(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D);
-
+    private static final VoxelShape SHAPE = Block.createColumnShape(16.0, 0.0, 1.0);
     public FrostyFluffCarpetBlock(Settings settings) {
         super(settings);
     }
@@ -48,17 +49,17 @@ public class FrostyFluffCarpetBlock extends CarpetBlock {
     }
 
     @Override
-    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
-        if (!world.isClient() && !entity.bypassesSteppingEffects())
+    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler) {
+        if (world.isClient() && !entity.bypassesSteppingEffects())
             if (entity.lastRenderX != entity.getX() || entity.lastRenderY != entity.getY() || entity.lastRenderZ != entity.getZ())
                 if (world.getRandom().nextInt(5) == 0) {
                     Box aabb = TOUCH_AABB.offset(pos);
                     if (world.getOtherEntities(null, aabb).contains(entity)) {
-                        ((ServerWorld) world).spawnParticles(SnufflesParticleTypes.SNOWFLAKE, entity.getX(), entity.getY(), entity.getZ(), 0, MathHelper.nextBetween(world.getRandom(), -1.0F, 1.0F) * 0.083F, 0.05F, MathHelper.nextBetween(world.getRandom(), -1.0F, 1.0F) * 0.083F, 1.0F);
+                        world.addParticleClient(SnufflesParticleTypes.SNOWFLAKE, entity.getX(), entity.getY(), entity.getZ(), MathHelper.nextBetween(world.getRandom(), -1.0F, 1.0F) * 0.083F, 0.05F, MathHelper.nextBetween(world.getRandom(), -1.0F, 1.0F) * 0.083F);
                     }
                 }
 
-        super.onEntityCollision(state, world, pos, entity);
+        super.onEntityCollision(state, world, pos, entity, handler);
     }
 
     @Override

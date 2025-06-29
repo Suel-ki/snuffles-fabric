@@ -27,13 +27,14 @@ import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.EntityTypeTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -78,7 +79,7 @@ public class Snuffle extends AnimalEntity implements Shearable {
         this.goalSelector.add(0, new SnuffleClimbOnTopOfPowderSnowGoal(this, this.getWorld()));
         this.goalSelector.add(1, new EscapeDangerGoal(this, 1.5D));
         this.goalSelector.add(2, new AnimalMateGoal(this, 1.0D));
-        this.goalSelector.add(3, new SnuffleTemptGoal(1.1D, Ingredient.fromTag(Registries.ITEM.getOptional(SnufflesItemTags.SNUFFLE_FOOD).orElseThrow()), false));
+        this.goalSelector.add(3, new SnuffleTemptGoal(1.1D, Ingredient.ofTag(Registries.ITEM.getOptional(SnufflesItemTags.SNUFFLE_FOOD).orElseThrow()), false));
         this.goalSelector.add(4, new FollowParentGoal(this, 1.1D));
         this.goalSelector.add(5, new FrostGoal());
         this.goalSelector.add(6, new WanderAroundFarGoal(this, 1.0D));
@@ -106,8 +107,8 @@ public class Snuffle extends AnimalEntity implements Shearable {
     }
 
     @Override
-    public void writeCustomDataToNbt(NbtCompound compound) {
-        super.writeCustomDataToNbt(compound);
+    public void writeCustomData(WriteView compound) {
+        super.writeCustomData(compound);
         compound.putInt("Hairstyle", this.getHairstyleId());
         compound.putBoolean("HasFluff", this.hasFluff());
         compound.putBoolean("Frosty", this.isFrosty());
@@ -115,12 +116,12 @@ public class Snuffle extends AnimalEntity implements Shearable {
     }
 
     @Override
-    public void readCustomDataFromNbt(NbtCompound compound) {
-        super.readCustomDataFromNbt(compound);
-        this.setHairstyleId(compound.getInt("Hairstyle"));
-        this.setFluff(compound.getBoolean("HasFluff"));
-        this.setFrosty(compound.getBoolean("Frosty"));
-        this.fluffGrowTime = compound.getInt("FluffGrowTime");
+    public void readCustomData(ReadView compound) {
+        super.readCustomData(compound);
+        this.setHairstyleId(compound.getInt("Hairstyle", 0));
+        this.setFluff(compound.getBoolean("HasFluff", false));
+        this.setFrosty(compound.getBoolean("Frosty", false));
+        this.fluffGrowTime = compound.getInt("FluffGrowTime", 0);
     }
 
     public void setFrostCounter(int counter) {
@@ -187,7 +188,7 @@ public class Snuffle extends AnimalEntity implements Shearable {
             }
 
             if ((this.lastRenderX != this.getX() || this.lastRenderY != this.getY() || this.lastRenderZ != this.getZ()) && this.getRandom().nextBoolean())
-                this.getWorld().addParticle(SnufflesParticleTypes.SNOWFLAKE, this.getParticleX(0.4D), this.getRandomBodyY(), this.getParticleZ(0.4D), 0.0D, 0.0D, 0.0D);
+                this.getWorld().addParticleClient(SnufflesParticleTypes.SNOWFLAKE, this.getParticleX(0.4D), this.getRandomBodyY(), this.getParticleZ(0.4D), 0.0D, 0.0D, 0.0D);
         }
 
         if (!this.hasFluff() && !this.isBaby()) {
@@ -287,7 +288,7 @@ public class Snuffle extends AnimalEntity implements Shearable {
     public void handleStatus(byte id) {
         if (id == 10) {
             for (int i = 0; i < 4; i ++)
-                this.getWorld().addParticle(SnufflesParticleTypes.SNOWFLAKE, this.getParticleX(0.8D), this.getEyeY(), this.getParticleZ(0.8D), 0.0D, 0.1D, 0.0D);
+                this.getWorld().addParticleClient(SnufflesParticleTypes.SNOWFLAKE, this.getParticleX(0.8D), this.getEyeY(), this.getParticleZ(0.8D), 0.0D, 0.1D, 0.0D);
         } else
             super.handleStatus(id);
     }

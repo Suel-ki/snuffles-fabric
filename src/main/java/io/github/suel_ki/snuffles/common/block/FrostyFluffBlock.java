@@ -7,11 +7,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCollisionHandler;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -34,8 +34,8 @@ public class FrostyFluffBlock extends Block {
     }
 
     @Override
-    public void onLandedUpon(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
-        super.onLandedUpon(world, state, pos, entity, fallDistance * 0.5F);
+    public void onLandedUpon(World world, BlockState state, BlockPos pos, Entity entity, double fallDistance) {
+        super.onLandedUpon(world, state, pos, entity, fallDistance * 0.5D);
     }
 
     @Override
@@ -54,18 +54,17 @@ public class FrostyFluffBlock extends Block {
     }
 
     @Override
-    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
-        if (entity instanceof LivingEntity && !entity.bypassesSteppingEffects() && !world.isClient()) {
+    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler) {
+        if (entity instanceof LivingEntity && !entity.bypassesSteppingEffects() && world.isClient()) {
             if (entity.lastRenderX != entity.getX() || entity.lastRenderY != entity.getY() || entity.lastRenderZ != entity.getZ()) {
                 if (world.getRandom().nextInt(5) == 0) {
-                    ((ServerWorld) world).spawnParticles(SnufflesParticleTypes.SNOWFLAKE, entity.getX(), entity.getY(), entity.getZ(), 0, MathHelper.nextBetween(world.getRandom(), -1.0F, 1.0F) * 0.083F, 0.05F, MathHelper.nextBetween(world.getRandom(), -1.0F, 1.0F) * 0.083F, 1.0F);
+                    world.addParticleClient(SnufflesParticleTypes.SNOWFLAKE, entity.getX(), entity.getY(), entity.getZ(), MathHelper.nextBetween(world.getRandom(), -1.0F, 1.0F) * 0.083F, 0.05F, MathHelper.nextBetween(world.getRandom(), -1.0F, 1.0F) * 0.083F);
                 }
             }
         }
 
-        super.onEntityCollision(state, world, pos, entity);
+        super.onEntityCollision(state, world, pos, entity, handler);
     }
-
 
     @Override
     public ActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hitResult) {
@@ -88,6 +87,6 @@ public class FrostyFluffBlock extends Block {
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         if (!world.getBlockState(pos.down()).isOpaque())
-            world.addParticle(SnufflesParticleTypes.SNOWFLAKE, pos.getX() + random.nextDouble(), pos.getY() - 0.1F, pos.getZ() + random.nextDouble(), 0.0F, 0.0F, 0.0F);
+            world.addParticleClient(SnufflesParticleTypes.SNOWFLAKE, pos.getX() + random.nextDouble(), pos.getY() - 0.1F, pos.getZ() + random.nextDouble(), 0.0F, 0.0F, 0.0F);
     }
 }

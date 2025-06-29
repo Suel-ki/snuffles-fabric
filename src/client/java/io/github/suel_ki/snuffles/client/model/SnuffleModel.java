@@ -58,11 +58,11 @@ public class SnuffleModel extends EntityModel<SnuffleEntityRenderState> {
     public void setAngles(SnuffleEntityRenderState state) {
         super.setAngles(state);
         float age = state.age;
-        float limbSwing = state.limbFrequency;
-        float limbSwingAmount = state.limbAmplitudeMultiplier;
+        float limbSwing = state.limbSwingAnimationProgress;
+        float limbSwingAmount = state.limbSwingAmplitude;
         boolean flag = !state.baby;
         this.horns.visible = flag;
-        this.hump.visible = flag && !SnufflesConfig.INSTANCE.instance().legacy_snuffle_model;
+        this.hump.visible = flag && !SnufflesConfig.instance().legacy_snuffle_model;
         if (state.frosting) {
             this.body.pitch = -0.0436F + 0.2F * MathHelper.sin(age * 1.2F);
             this.body.roll = 0.12F * MathHelper.cos(age * 0.6F);

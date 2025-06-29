@@ -11,7 +11,7 @@ import net.minecraft.entity.SpawnGroup;
 public class SnufflesSpawns {
 
     public static void registerSpawns() {
-        int weight = SnufflesConfig.INSTANCE.instance().snuffles_weight;
+        int weight = SnufflesConfig.instance().snuffles_weight;
         addEntityToBiome(SpawnGroup.CREATURE, SnufflesEntityTypes.SNUFFLE,
                 weight > 0 ? weight : 8, 4, 4);
     }

@@ -5,6 +5,8 @@ import io.github.suel_ki.snuffles.core.dispenser.SnufflesShearsDispenseItemBehav
 import io.github.suel_ki.snuffles.core.misc.SnufflesFlammables;
 import io.github.suel_ki.snuffles.core.misc.SnufflesSpawns;
 import io.github.suel_ki.snuffles.core.registry.*;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -17,7 +19,7 @@ public class Snuffles implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        SnufflesConfig.INSTANCE.load();
+        AutoConfig.register(SnufflesConfig.class, GsonConfigSerializer::new);
 
         SnufflesBlocks.init();
         SnufflesEntityTypes.init();
