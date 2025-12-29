@@ -49,7 +49,7 @@ public class FrostyFluffCarpetBlock extends CarpetBlock {
     }
 
     @Override
-    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler) {
+    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler, boolean bl) {
         if (world.isClient() && !entity.bypassesSteppingEffects())
             if (entity.lastRenderX != entity.getX() || entity.lastRenderY != entity.getY() || entity.lastRenderZ != entity.getZ())
                 if (world.getRandom().nextInt(5) == 0) {
@@ -59,7 +59,7 @@ public class FrostyFluffCarpetBlock extends CarpetBlock {
                     }
                 }
 
-        super.onEntityCollision(state, world, pos, entity, handler);
+        super.onEntityCollision(state, world, pos, entity, handler, bl);
     }
 
     @Override

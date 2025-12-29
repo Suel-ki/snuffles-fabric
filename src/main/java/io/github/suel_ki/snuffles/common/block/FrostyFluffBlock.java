@@ -54,7 +54,7 @@ public class FrostyFluffBlock extends Block {
     }
 
     @Override
-    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler) {
+    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler, boolean bl) {
         if (entity instanceof LivingEntity && !entity.bypassesSteppingEffects() && world.isClient()) {
             if (entity.lastRenderX != entity.getX() || entity.lastRenderY != entity.getY() || entity.lastRenderZ != entity.getZ()) {
                 if (world.getRandom().nextInt(5) == 0) {
@@ -63,7 +63,7 @@ public class FrostyFluffBlock extends Block {
             }
         }
 
-        super.onEntityCollision(state, world, pos, entity, handler);
+        super.onEntityCollision(state, world, pos, entity, handler, bl);
     }
 
     @Override
