@@ -22,7 +22,7 @@ public class SnufflesItems {
     public static final Item FROSTY_FLUFF = registerBlockItem("frosty_fluff",  SnufflesBlocks.FROSTY_FLUFF);
     public static final Item SNUFFLE_FLUFF_CARPET = registerFuelBlockItem("snuffle_fluff_carpet", SnufflesBlocks.SNUFFLE_FLUFF_CARPET, 67);
     public static final Item FROSTY_FLUFF_CARPET = registerBlockItem("frosty_fluff_carpet", SnufflesBlocks.FROSTY_FLUFF_CARPET);
-    public static final Item SNUFFLE_SPAWN_EGG = register("snuffle_spawn_egg", settings -> new SpawnEggItem(SnufflesEntityTypes.SNUFFLE, settings), new Item.Settings());
+    public static final Item SNUFFLE_SPAWN_EGG = register("snuffle_spawn_egg", SpawnEggItem::new, new Item.Settings().spawnEgg(SnufflesEntityTypes.SNUFFLE));
 
     public static void init() {
     }

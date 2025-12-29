@@ -6,6 +6,7 @@ import io.github.suel_ki.snuffles.core.Snuffles;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
@@ -34,27 +35,17 @@ public class SnuffleFluffLayer<T extends SnuffleEntityRenderState, M extends Snu
     }
 
     @Override
-    public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T state, float limbAngle, float limbDistance) {
+    public void render(MatrixStack matrices, OrderedRenderCommandQueue queue, int light, T state, float limbAngle, float limbDistance) {
         if (!state.baby && state.fluff) {
             if (state.invisible) {
-                boolean flag = state.hasOutline;
+                boolean flag = state.hasOutline();
                 if (flag) {
-                    VertexConsumer vertexconsumer = vertexConsumers.getBuffer(RenderLayer.getOutline(this.getTextureLocation(state)));
-                    this.getContextModel().render(matrices, vertexconsumer, light, LivingEntityRenderer.getOverlay(state, 0.0F), packRGB(new Vector3f(0.0F, 0.0F, 0.0F)));
+                    queue.submitModel(this.getContextModel(), state, matrices, RenderLayer.getOutline(this.getTextureLocation(state)), light, LivingEntityRenderer.getOverlay(state, 0.0F), state.outlineColor, null);
                 }
             } else {
-                VertexConsumer vertexconsumer = vertexConsumers.getBuffer(RenderLayer.getEntityCutoutNoCull(this.getTextureLocation(state)));
-                this.getContextModel().render(matrices, vertexconsumer, light, LivingEntityRenderer.getOverlay(state, 0.0F), packRGB(new Vector3f(1.0F, 1.0F, 1.0F)));
+                queue.submitModel(this.getContextModel(), state, matrices, RenderLayer.getEntityCutoutNoCull(this.getTextureLocation(state)), light, LivingEntityRenderer.getOverlay(state, 0.0F), state.outlineColor, null);
             }
         }
-    }
-
-    static int packRGB(Vector3f color) {
-        int red = (int) (color.x() * 255.0F);
-        int green = (int) (color.y() * 255.0F);
-        int blue = (int) (color.z() * 255.0F);
-
-        return (red << 16) | (green << 8) | blue;
     }
 
     public Identifier getTextureLocation(SnuffleEntityRenderState state) {

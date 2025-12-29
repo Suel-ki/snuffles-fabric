@@ -7,6 +7,7 @@ import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.random.Random;
 
 public class SnufflesSnowflakeParticle extends SnowflakeParticle {
 
@@ -36,8 +37,10 @@ public class SnufflesSnowflakeParticle extends SnowflakeParticle {
             this.spriteProvider = spriteProvider;
         }
 
-        public Particle createParticle(SimpleParticleType defaultParticleType, ClientWorld world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+        @Override
+        public Particle createParticle(SimpleParticleType defaultParticleType, ClientWorld world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, Random random) {
             return new SnufflesSnowflakeParticle(world, x, y, z, xSpeed, ySpeed, zSpeed, this.spriteProvider);
         }
+
     }
 }
