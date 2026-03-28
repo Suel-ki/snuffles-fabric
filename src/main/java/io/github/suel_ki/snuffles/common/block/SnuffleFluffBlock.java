@@ -2,72 +2,72 @@ package io.github.suel_ki.snuffles.common.block;
 
 import io.github.suel_ki.snuffles.core.registry.SnufflesBlocks;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.Heightmap;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
 public class SnuffleFluffBlock extends Block {
-    protected static final VoxelShape SHAPE = Block.createCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 15.0D, 16.0D);
-    public SnuffleFluffBlock(Settings settings) {
-        super(settings);
+    protected static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 15.0D, 16.0D);
+    public SnuffleFluffBlock(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public @NotNull VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    public @NotNull VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
     @Override
-    public @NotNull VoxelShape getSidesShape(BlockState state, BlockView world, BlockPos pos) {
-        return VoxelShapes.fullCube();
+    public @NotNull VoxelShape getBlockSupportShape(BlockState state, BlockGetter world, BlockPos pos) {
+        return Shapes.block();
     }
 
     @Override
-    public @NotNull VoxelShape getCameraCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return VoxelShapes.fullCube();
+    public @NotNull VoxelShape getVisualShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        return Shapes.block();
     }
 
     @Override
-    public void onLandedUpon(World world, BlockState state, BlockPos pos, Entity entity, double fallDistance) {
-        super.onLandedUpon(world, state, pos, entity, fallDistance * 0.5D);
+    public void fallOn(Level world, BlockState state, BlockPos pos, Entity entity, double fallDistance) {
+        super.fallOn(world, state, pos, entity, fallDistance * 0.5D);
     }
 
     @Override
-    public float calcBlockBreakingDelta(BlockState state, PlayerEntity player, BlockView world, BlockPos pos) {
-        float original = super.calcBlockBreakingDelta(state, player, world, pos);
-        return player.getMainHandStack().isIn(ConventionalItemTags.SHEAR_TOOLS) ? original * 5.0F : original;
+    public float getDestroyProgress(BlockState state, Player player, BlockGetter world, BlockPos pos) {
+        float original = super.getDestroyProgress(state, player, world, pos);
+        return player.getMainHandItem().is(ConventionalItemTags.SHEAR_TOOLS) ? original * 5.0F : original;
     }
 
     @Override
-    public boolean hasRandomTicks(BlockState state) {
+    public boolean isRandomlyTicking(BlockState state) {
         return true;
     }
 
     @Override
-    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        if (this.isSnowingAt(world, pos.down()))
-            world.setBlockState(pos, SnufflesBlocks.FROSTY_FLUFF.getDefaultState(), 2);
+    public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+        if (this.isSnowingAt(world, pos.below()))
+            world.setBlock(pos, SnufflesBlocks.FROSTY_FLUFF.defaultBlockState(), 2);
     }
 
-    private boolean isSnowingAt(ServerWorld world, BlockPos pos) {
+    private boolean isSnowingAt(ServerLevel world, BlockPos pos) {
         if (!world.isRaining())
             return false;
-        else if (!world.isSkyVisible(pos))
+        else if (!world.canSeeSky(pos))
             return false;
-        else if (world.getTopPosition(Heightmap.Type.MOTION_BLOCKING, pos).getY() > pos.getY())
+        else if (world.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY())
             return false;
         else
-            return world.getBiome(pos).value().isCold(pos, world.getSeaLevel());
+            return world.getBiome(pos).value().coldEnoughToSnow(pos, world.getSeaLevel());
     }
 }

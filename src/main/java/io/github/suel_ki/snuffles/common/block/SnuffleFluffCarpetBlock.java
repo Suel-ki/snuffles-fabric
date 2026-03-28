@@ -2,59 +2,59 @@ package io.github.suel_ki.snuffles.common.block;
 
 
 import io.github.suel_ki.snuffles.core.registry.SnufflesBlocks;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.CarpetBlock;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.Heightmap;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.CarpetBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
 public class SnuffleFluffCarpetBlock extends CarpetBlock {
-    public SnuffleFluffCarpetBlock(Settings settings) {
-        super(settings);
+    public SnuffleFluffCarpetBlock(Properties properties) {
+        super(properties);
     }
-    private static final VoxelShape SHAPE = Block.createColumnShape(16.0, 0.0, 1.0);
+    private static final VoxelShape SHAPE = Block.column(16.0, 0.0, 1.0);
 
     @Override
-    public @NotNull VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return VoxelShapes.empty();
+    public @NotNull VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Shapes.empty();
     }
 
     @Override
-    public @NotNull VoxelShape getSidesShape(BlockState state, BlockView world, BlockPos pos) {
+    public @NotNull VoxelShape getBlockSupportShape(BlockState state, BlockGetter world, BlockPos pos) {
         return SHAPE;
     }
 
     @Override
-    public @NotNull VoxelShape getCameraCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    public @NotNull VoxelShape getVisualShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
     @Override
-    public boolean hasRandomTicks(BlockState state) {
+    public boolean isRandomlyTicking(BlockState state) {
         return true;
     }
 
     @Override
-    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+    public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
         if (this.isSnowingAt(world, pos))
-            world.setBlockState(pos, SnufflesBlocks.FROSTY_FLUFF_CARPET.getDefaultState(), 2);
+            world.setBlock(pos, SnufflesBlocks.FROSTY_FLUFF_CARPET.defaultBlockState(), 2);
     }
 
-    private boolean isSnowingAt(ServerWorld world, BlockPos pos) {
+    private boolean isSnowingAt(ServerLevel world, BlockPos pos) {
         if (!world.isRaining())
             return false;
-        else if (!world.isSkyVisible(pos))
+        else if (!world.canSeeSky(pos))
             return false;
-        else if (world.getTopPosition(Heightmap.Type.MOTION_BLOCKING, pos).getY() > pos.getY())
+        else if (world.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY())
             return false;
         else
-            return world.getBiome(pos).value().isCold(pos, world.getSeaLevel());
+            return world.getBiome(pos).value().coldEnoughToSnow(pos, world.getSeaLevel());
     }
 }

@@ -5,18 +5,18 @@ import io.github.suel_ki.snuffles.core.registry.SnufflesEntityTypes;
 import io.github.suel_ki.snuffles.core.tags.SnufflesBiomeTags;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnGroup;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 
 public class SnufflesSpawns {
 
     public static void registerSpawns() {
         int weight = SnufflesConfig.instance().snuffles_weight;
-        addEntityToBiome(SpawnGroup.CREATURE, SnufflesEntityTypes.SNUFFLE,
+        addEntityToBiome(MobCategory.CREATURE, SnufflesEntityTypes.SNUFFLE,
                 weight > 0 ? weight : 8, 4, 4);
     }
 
-    public static void addEntityToBiome(SpawnGroup spawnGroup, EntityType<?> entityType,
+    public static void addEntityToBiome(MobCategory spawnGroup, EntityType<?> entityType,
                                         int weight, int minGroupSize, int maxGroupSize) {
         BiomeModifications.addSpawn(BiomeSelectors.tag(SnufflesBiomeTags.SNUFFLES_SPAWNABLE), spawnGroup, entityType, weight, minGroupSize, maxGroupSize);
     }

@@ -3,7 +3,7 @@ package io.github.suel_ki.snuffles.core.misc;
 
 import io.github.suel_ki.snuffles.core.registry.SnufflesBlocks;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 
 public class SnufflesFlammables {
     public static void registerFlammables() {

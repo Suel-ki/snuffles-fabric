@@ -2,10 +2,11 @@ package io.github.suel_ki.snuffles.client.model;
 
 import io.github.suel_ki.snuffles.client.renderer.entity.state.SnuffleEntityRenderState;
 import io.github.suel_ki.snuffles.core.config.SnufflesConfig;
-import net.minecraft.client.model.*;
-import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.render.entity.model.ModelTransformer;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.util.Mth;
 
 public class SnuffleModel extends EntityModel<SnuffleEntityRenderState> {
     private final ModelPart body;
@@ -17,7 +18,7 @@ public class SnuffleModel extends EntityModel<SnuffleEntityRenderState> {
     private final ModelPart rightHindLeg;
     private final ModelPart leftHindLeg;
 
-    public static final ModelTransformer BABY_TRANSFORMER = ModelTransformer.scaling(0.6F);
+    public static final MeshTransformer BABY_TRANSFORMER = MeshTransformer.scaling(0.6F);
 
     public SnuffleModel(ModelPart part) {
         super(part);
@@ -31,60 +32,60 @@ public class SnuffleModel extends EntityModel<SnuffleEntityRenderState> {
         this.leftHindLeg = part.getChild("left_hind_leg");
     }
 
-    public static TexturedModelData getTexturedModelData(boolean baby) {
-        ModelData modelData = new ModelData();
-        ModelPartData modelPartData = modelData.getRoot();
-        ModelPartData body = modelPartData.addChild("body", ModelPartBuilder.create(), ModelTransform.of(0.0F, 14.0F, 0.0F, -0.0436F, 0.0F, 0.0F));
-        body.addChild("hump", ModelPartBuilder.create().uv(56, 30).cuboid(-9.0F, -8.0F, -6.0F, 18.0F, 2.0F, 13.0F), ModelTransform.NONE);
-        body.addChild("torso", ModelPartBuilder.create().uv(0, 25).cuboid(-9.0F, -6.0F, -10.0F, 18.0F, 11.0F, 20.0F), ModelTransform.NONE);
-        body.addChild("tongue", ModelPartBuilder.create().uv(80, 16).cuboid(-6.0F, 0.0F, -7.0F, 12.0F, 1.0F, 8.0F), ModelTransform.of(0.0F, 4.0F, -10.0F, 0.3927F, 0.0F, 0.0F));
-        body.addChild("fluff", ModelPartBuilder.create().uv(0, 0).cuboid(-9.0F, 5.0F, -10.0F, 18.0F, 5.0F, 20.0F), ModelTransform.NONE);
-        ModelPartData horns = body.addChild("horns", ModelPartBuilder.create(),  ModelTransform.NONE);
-        horns.addChild("right_horn", ModelPartBuilder.create().uv(102, 0).cuboid(-3.0F, -7.0F, -6.0F, 3.0F, 8.0F, 8.0F), ModelTransform.of(-9.0F, -4.0F, -6.0F, 0.0873F, 0.0F, 0.0F));
-        horns.addChild("left_horn", ModelPartBuilder.create().uv(80, 0).cuboid(0.0F, -7.0F, -6.0F, 3.0F, 8.0F, 8.0F), ModelTransform.of(9.0F, -4.0F, -6.0F, 0.0873F, 0.0F, 0.0F));
-        modelPartData.addChild("right_front_leg", ModelPartBuilder.create().uv(0, 0).mirrored().cuboid(-2.5F, 0.0F, -2.5F, 5.0F, 7.0F, 5.0F), ModelTransform.of(-4.5F, 17.0F, -5.5F, 0.0F, 0.1309F, 0.0F));
-        modelPartData.addChild("left_front_leg", ModelPartBuilder.create().uv(0, 0).cuboid(-2.5F, 0.0F, -2.5F, 5.0F, 7.0F, 5.0F), ModelTransform.of(4.5F, 17.0F, -5.5F, 0.0F, -0.1309F, 0.0F));
-        modelPartData.addChild("right_hind_leg", ModelPartBuilder.create().uv(0, 0).mirrored().cuboid(-2.5F, 0.0F, -2.5F, 5.0F, 7.0F, 5.0F), ModelTransform.of(-4.5F, 17.0F, 5.5F, 0.0F, 0.1309F, 0.0F));
-        modelPartData.addChild("left_hind_leg", ModelPartBuilder.create().uv(0, 0).cuboid(-2.5F, 0.0F, -2.5F, 5.0F, 7.0F, 5.0F), ModelTransform.of(4.5F, 17.0F, 5.5F, 0.0F, -0.1309F, 0.0F));
+    public static LayerDefinition getTexturedModelData(boolean baby) {
+        MeshDefinition modelData = new MeshDefinition();
+        PartDefinition modelPartData = modelData.getRoot();
+        PartDefinition body = modelPartData.addOrReplaceChild("body", CubeListBuilder.create(), PartPose.offsetAndRotation(0.0F, 14.0F, 0.0F, -0.0436F, 0.0F, 0.0F));
+        body.addOrReplaceChild("hump", CubeListBuilder.create().texOffs(56, 30).addBox(-9.0F, -8.0F, -6.0F, 18.0F, 2.0F, 13.0F), PartPose.ZERO);
+        body.addOrReplaceChild("torso", CubeListBuilder.create().texOffs(0, 25).addBox(-9.0F, -6.0F, -10.0F, 18.0F, 11.0F, 20.0F), PartPose.ZERO);
+        body.addOrReplaceChild("tongue", CubeListBuilder.create().texOffs(80, 16).addBox(-6.0F, 0.0F, -7.0F, 12.0F, 1.0F, 8.0F), PartPose.offsetAndRotation(0.0F, 4.0F, -10.0F, 0.3927F, 0.0F, 0.0F));
+        body.addOrReplaceChild("fluff", CubeListBuilder.create().texOffs(0, 0).addBox(-9.0F, 5.0F, -10.0F, 18.0F, 5.0F, 20.0F), PartPose.ZERO);
+        PartDefinition horns = body.addOrReplaceChild("horns", CubeListBuilder.create(),  PartPose.ZERO);
+        horns.addOrReplaceChild("right_horn", CubeListBuilder.create().texOffs(102, 0).addBox(-3.0F, -7.0F, -6.0F, 3.0F, 8.0F, 8.0F), PartPose.offsetAndRotation(-9.0F, -4.0F, -6.0F, 0.0873F, 0.0F, 0.0F));
+        horns.addOrReplaceChild("left_horn", CubeListBuilder.create().texOffs(80, 0).addBox(0.0F, -7.0F, -6.0F, 3.0F, 8.0F, 8.0F), PartPose.offsetAndRotation(9.0F, -4.0F, -6.0F, 0.0873F, 0.0F, 0.0F));
+        modelPartData.addOrReplaceChild("right_front_leg", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-2.5F, 0.0F, -2.5F, 5.0F, 7.0F, 5.0F), PartPose.offsetAndRotation(-4.5F, 17.0F, -5.5F, 0.0F, 0.1309F, 0.0F));
+        modelPartData.addOrReplaceChild("left_front_leg", CubeListBuilder.create().texOffs(0, 0).addBox(-2.5F, 0.0F, -2.5F, 5.0F, 7.0F, 5.0F), PartPose.offsetAndRotation(4.5F, 17.0F, -5.5F, 0.0F, -0.1309F, 0.0F));
+        modelPartData.addOrReplaceChild("right_hind_leg", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-2.5F, 0.0F, -2.5F, 5.0F, 7.0F, 5.0F), PartPose.offsetAndRotation(-4.5F, 17.0F, 5.5F, 0.0F, 0.1309F, 0.0F));
+        modelPartData.addOrReplaceChild("left_hind_leg", CubeListBuilder.create().texOffs(0, 0).addBox(-2.5F, 0.0F, -2.5F, 5.0F, 7.0F, 5.0F), PartPose.offsetAndRotation(4.5F, 17.0F, 5.5F, 0.0F, -0.1309F, 0.0F));
 
-        modelPartData.addChild("right_front_leg", ModelPartBuilder.create().uv(0, 0).mirrored().cuboid(-2.5F, 0.0F, -2.5F, 5.0F, 7.0F, 5.0F), ModelTransform.of(-4.5F, 17.0F, -5.5F, 0.0F, 0.0873F, 0.0F));
-        modelPartData.addChild("left_front_leg", ModelPartBuilder.create().uv(0, 0).cuboid(-2.5F, 0.0F, -2.5F, 5.0F, 7.0F, 5.0F), ModelTransform.of(4.5F, 17.0F, -5.5F, 0.0F, -0.0873F, 0.0F));
-        modelPartData.addChild("right_hind_leg", ModelPartBuilder.create().uv(0, 0).mirrored().cuboid(-2.5F, 0.0F, -2.5F, 5.0F, 7.0F, 5.0F), ModelTransform.of(-4.5F, 17.0F, 5.5F, 0.0F, 0.0873F, 0.0F));
-        modelPartData.addChild("left_hind_leg", ModelPartBuilder.create().uv(0, 0).cuboid(-2.5F, 0.0F, -2.5F, 5.0F, 7.0F, 5.0F), ModelTransform.of(4.5F, 17.0F, 5.5F, 0.0F, -0.0873F, 0.0F));
-        TexturedModelData texturedModelData = TexturedModelData.of(modelData, 128, 64);
-        return baby? texturedModelData.transform(BABY_TRANSFORMER) : texturedModelData;
+        modelPartData.addOrReplaceChild("right_front_leg", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-2.5F, 0.0F, -2.5F, 5.0F, 7.0F, 5.0F), PartPose.offsetAndRotation(-4.5F, 17.0F, -5.5F, 0.0F, 0.0873F, 0.0F));
+        modelPartData.addOrReplaceChild("left_front_leg", CubeListBuilder.create().texOffs(0, 0).addBox(-2.5F, 0.0F, -2.5F, 5.0F, 7.0F, 5.0F), PartPose.offsetAndRotation(4.5F, 17.0F, -5.5F, 0.0F, -0.0873F, 0.0F));
+        modelPartData.addOrReplaceChild("right_hind_leg", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-2.5F, 0.0F, -2.5F, 5.0F, 7.0F, 5.0F), PartPose.offsetAndRotation(-4.5F, 17.0F, 5.5F, 0.0F, 0.0873F, 0.0F));
+        modelPartData.addOrReplaceChild("left_hind_leg", CubeListBuilder.create().texOffs(0, 0).addBox(-2.5F, 0.0F, -2.5F, 5.0F, 7.0F, 5.0F), PartPose.offsetAndRotation(4.5F, 17.0F, 5.5F, 0.0F, -0.0873F, 0.0F));
+        LayerDefinition texturedModelData = LayerDefinition.create(modelData, 128, 64);
+        return baby? texturedModelData.apply(BABY_TRANSFORMER) : texturedModelData;
     }
 
-    public void setAngles(SnuffleEntityRenderState state) {
-        super.setAngles(state);
-        float age = state.age;
-        float limbSwing = state.limbSwingAnimationProgress;
-        float limbSwingAmount = state.limbSwingAmplitude;
-        boolean flag = !state.baby;
+    public void setupAnim(SnuffleEntityRenderState state) {
+        super.setupAnim(state);
+        float age = state.ageInTicks;
+        float limbSwing = state.walkAnimationPos;
+        float limbSwingAmount = state.walkAnimationSpeed;
+        boolean flag = !state.isBaby;
         this.horns.visible = flag;
         this.hump.visible = flag && !SnufflesConfig.instance().legacy_snuffle_model;
         if (state.frosting) {
-            this.body.pitch = -0.0436F + 0.2F * MathHelper.sin(age * 1.2F);
-            this.body.roll = 0.12F * MathHelper.cos(age * 0.6F);
+            this.body.xRot = -0.0436F + 0.2F * Mth.sin(age * 1.2F);
+            this.body.zRot = 0.12F * Mth.cos(age * 0.6F);
         } else {
-            this.body.pitch = -0.0436F + 0.2F * MathHelper.sin(limbSwing * 0.6F) * limbSwingAmount;
-            this.body.roll = 0.12F * MathHelper.cos(limbSwing * 0.2F) * limbSwingAmount;
+            this.body.xRot = -0.0436F + 0.2F * Mth.sin(limbSwing * 0.6F) * limbSwingAmount;
+            this.body.zRot = 0.12F * Mth.cos(limbSwing * 0.2F) * limbSwingAmount;
         }
 
-        this.rightHindLeg.pitch = MathHelper.cos(limbSwing * 0.45F) * 1.5F * limbSwingAmount;
-        this.leftHindLeg.pitch = MathHelper.cos(limbSwing * 0.45F + (float) Math.PI) * 1.5F * limbSwingAmount;
-        this.rightHindLeg.roll = MathHelper.cos(limbSwing * 0.45F) * 0.15F * limbSwingAmount;
-        this.leftHindLeg.roll = MathHelper.cos(limbSwing * 0.45F + (float) Math.PI) * 0.15F * limbSwingAmount;
+        this.rightHindLeg.xRot = Mth.cos(limbSwing * 0.45F) * 1.5F * limbSwingAmount;
+        this.leftHindLeg.xRot = Mth.cos(limbSwing * 0.45F + (float) Math.PI) * 1.5F * limbSwingAmount;
+        this.rightHindLeg.zRot = Mth.cos(limbSwing * 0.45F) * 0.15F * limbSwingAmount;
+        this.leftHindLeg.zRot = Mth.cos(limbSwing * 0.45F + (float) Math.PI) * 0.15F * limbSwingAmount;
 
-        this.rightFrontLeg.pitch = this.leftHindLeg.pitch;
-        this.leftFrontLeg.pitch = this.rightHindLeg.pitch;
-        this.rightFrontLeg.roll = this.rightHindLeg.roll;
-        this.leftFrontLeg.roll = this.leftHindLeg.roll;
+        this.rightFrontLeg.xRot = this.leftHindLeg.xRot;
+        this.leftFrontLeg.xRot = this.rightHindLeg.xRot;
+        this.rightFrontLeg.zRot = this.rightHindLeg.zRot;
+        this.leftFrontLeg.zRot = this.leftHindLeg.zRot;
 
         if (state.licking || state.frosting) {
-            this.tongue.pitch = 0.3927F + MathHelper.sin(age * 0.8F) * 0.2F;
+            this.tongue.xRot = 0.3927F + Mth.sin(age * 0.8F) * 0.2F;
         } else {
-            this.tongue.pitch = 0.3927F + MathHelper.sin(age * 0.12F) * 0.2F;
+            this.tongue.xRot = 0.3927F + Mth.sin(age * 0.12F) * 0.2F;
         }
     }
 }

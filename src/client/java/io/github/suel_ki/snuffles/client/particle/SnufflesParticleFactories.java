@@ -1,9 +1,9 @@
 package io.github.suel_ki.snuffles.client.particle;
 
 import io.github.suel_ki.snuffles.core.registry.SnufflesParticleTypes;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleType;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
 
 public class SnufflesParticleFactories {
 
@@ -11,7 +11,7 @@ public class SnufflesParticleFactories {
         registerFactory(SnufflesParticleTypes.SNOWFLAKE, SnufflesSnowflakeParticle.Factory::new);
     }
 
-    private static <T extends ParticleEffect> void registerFactory(ParticleType<T> particle, ParticleFactoryRegistry.PendingParticleFactory<T> factory) {
-        ParticleFactoryRegistry.getInstance().register(particle, factory);
+    private static <T extends ParticleOptions> void registerFactory(ParticleType<T> particle, ParticleProviderRegistry.PendingParticleProvider<T> factory) {
+        ParticleProviderRegistry.getInstance().register(particle, factory);
     }
 }

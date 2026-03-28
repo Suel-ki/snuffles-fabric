@@ -1,9 +1,9 @@
 package io.github.suel_ki.snuffles.core.registry;
 
 import io.github.suel_ki.snuffles.core.Snuffles;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.sounds.SoundEvent;
 
 public class SnufflesSoundEvents {
 
@@ -19,7 +19,7 @@ public class SnufflesSoundEvents {
     public static final SoundEvent SNUFFLE_THAW = register("entity.snuffle.thaw");
 
     private static SoundEvent register(String name) {
-        return Registry.register(Registries.SOUND_EVENT, name, SoundEvent.of(Snuffles.id(name)));
+        return Registry.register(BuiltInRegistries.SOUND_EVENT, name, SoundEvent.createVariableRangeEvent(Snuffles.id(name)));
     }
 
     public static void init() {}

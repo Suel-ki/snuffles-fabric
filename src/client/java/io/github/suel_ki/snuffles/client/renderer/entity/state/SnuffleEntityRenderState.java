@@ -1,7 +1,7 @@
 package io.github.suel_ki.snuffles.client.renderer.entity.state;
 
 import io.github.suel_ki.snuffles.common.entity.animal.Snuffle;
-import net.minecraft.client.render.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 
 public class SnuffleEntityRenderState extends LivingEntityRenderState {
     public boolean licking;

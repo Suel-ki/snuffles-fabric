@@ -8,7 +8,7 @@ import io.github.suel_ki.snuffles.core.registry.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +36,6 @@ public class Snuffles implements ModInitializer {
     }
 
     public static Identifier id(String id) {
-        return Identifier.of(MOD_ID, id);
+        return Identifier.fromNamespaceAndPath(MOD_ID, id);
     }
 }

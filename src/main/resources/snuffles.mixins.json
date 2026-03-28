@@ -4,6 +4,7 @@
   "package": "io.github.suel_ki.snuffles.core.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "common.EntityMixin",
     "common.FireBlockMixin"
   ],
   "client": [

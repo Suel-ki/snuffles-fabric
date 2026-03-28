@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:shearing",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "snuffles:snuffle_fluff"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "snuffles:shearing/snuffle/snuffle"
+}

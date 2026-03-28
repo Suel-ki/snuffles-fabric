@@ -1,18 +1,18 @@
 package io.github.suel_ki.snuffles.client.renderer.entity.layers;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.suel_ki.snuffles.client.model.SnuffleModel;
 import io.github.suel_ki.snuffles.client.renderer.entity.state.SnuffleEntityRenderState;
 import io.github.suel_ki.snuffles.core.Snuffles;
-import net.minecraft.client.render.RenderLayers;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.feature.FeatureRenderer;
-import net.minecraft.client.render.entity.feature.FeatureRendererContext;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.RenderLayerParent;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.tuple.Pair;
 
-public class SnuffleFluffLayer<T extends SnuffleEntityRenderState, M extends SnuffleModel> extends FeatureRenderer<T, M> {
+public class SnuffleFluffLayer<T extends SnuffleEntityRenderState, M extends SnuffleModel> extends RenderLayer<T, M> {
 
     private static final Pair<Identifier, Identifier> FLUFF = Pair.of(
             Snuffles.id("textures/entity/snuffle/snuffle_fluff.png"),
@@ -27,20 +27,20 @@ public class SnuffleFluffLayer<T extends SnuffleEntityRenderState, M extends Snu
             Snuffles.id("textures/entity/snuffle/frosty_fluff_sheepdog.png")
     );
 
-    public SnuffleFluffLayer(FeatureRendererContext<T, M> parent) {
+    public SnuffleFluffLayer(RenderLayerParent<T, M> parent) {
         super(parent);
     }
 
     @Override
-    public void render(MatrixStack matrices, OrderedRenderCommandQueue queue, int light, T state, float limbAngle, float limbDistance) {
-        if (!state.baby && state.fluff) {
-            if (state.invisible) {
-                boolean flag = state.hasOutline();
+    public void submit(PoseStack poseStack, final SubmitNodeCollector collector, int light, T state, float yRot, float xRot) {
+        if (!state.isBaby && state.fluff) {
+            if (state.isInvisible) {
+                boolean flag = state.appearsGlowing();
                 if (flag) {
-                    queue.submitModel(this.getContextModel(), state, matrices, RenderLayers.outlineNoCull(this.getTextureLocation(state)), light, LivingEntityRenderer.getOverlay(state, 0.0F), state.outlineColor, null);
+                    collector.submitModel(this.getParentModel(), state, poseStack, RenderTypes.outline(this.getTextureLocation(state)), light, LivingEntityRenderer.getOverlayCoords(state, 0.0F), state.outlineColor, null);
                 }
             } else {
-                queue.submitModel(this.getContextModel(), state, matrices, RenderLayers.entityCutoutNoCull(this.getTextureLocation(state)), light, LivingEntityRenderer.getOverlay(state, 0.0F), state.outlineColor, null);
+                collector.submitModel(this.getParentModel(), state, poseStack, RenderTypes.entityCutout(this.getTextureLocation(state)), light, LivingEntityRenderer.getOverlayCoords(state, 0.0F), state.outlineColor, null);
             }
         }
     }
