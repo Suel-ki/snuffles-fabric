@@ -16,9 +16,7 @@
                   "condition": "minecraft:entity_properties",
                   "entity": "this",
                   "predicate": {
-                    "type": "snuffles:snuffle",
-                    "type_specific": {
-                      "type": "snuffles:frosty",
+                    "snuffles:frosty": {
                       "frosty": true
                     }
                   }
@@ -33,9 +31,7 @@
                   "condition": "minecraft:entity_properties",
                   "entity": "this",
                   "predicate": {
-                    "type": "snuffles:snuffle",
-                    "type_specific": {
-                      "type": "snuffles:frosty",
+                    "snuffles:frosty": {
                       "frosty": false
                     }
                   }

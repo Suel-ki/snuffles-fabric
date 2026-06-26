@@ -1,13 +1,12 @@
 package io.github.suel_ki.snuffles.core.registry;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.suel_ki.snuffles.common.entity.animal.Snuffle;
 import io.github.suel_ki.snuffles.core.Snuffles;
 import io.github.suel_ki.snuffles.core.config.SnufflesConfig;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityType;
-import net.minecraft.advancements.criterion.EntitySubPredicate;
+import net.minecraft.advancements.predicates.entity.EntitySubPredicate;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -42,16 +41,11 @@ public class SnufflesEntityTypes {
 
     public record FrostyPredicate(boolean frosty) implements EntitySubPredicate {
 
-        public static final MapCodec<FrostyPredicate> CODEC = RecordCodecBuilder.mapCodec(instance ->
+        public static final Codec<FrostyPredicate> CODEC = RecordCodecBuilder.create(instance ->
                 instance.group(
-                            Codec.BOOL.fieldOf("frosty").forGetter(FrostyPredicate::frosty)
+                        Codec.BOOL.fieldOf("frosty").forGetter(FrostyPredicate::frosty)
                 ).apply(instance, FrostyPredicate::new)
         );
-
-        @Override
-        public MapCodec<? extends EntitySubPredicate> codec() {
-            return CODEC;
-        }
 
         @Override
         public boolean matches(Entity entity, ServerLevel level, @Nullable Vec3 position) {
