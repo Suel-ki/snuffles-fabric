@@ -37,10 +37,10 @@ public class SnuffleFluffLayer<T extends SnuffleEntityRenderState, M extends Snu
             if (state.isInvisible) {
                 boolean flag = state.appearsGlowing();
                 if (flag) {
-                    collector.submitModel(this.getParentModel(), state, poseStack, RenderTypes.outline(this.getTextureLocation(state)), light, LivingEntityRenderer.getOverlayCoords(state, 0.0F), state.outlineColor, null);
+                    collector.submitModel(this.getParentModel(), state, poseStack, RenderTypes.outline(this.getTextureLocation(state)), light, LivingEntityRenderer.getOverlayCoords(state, 0.0F), state.outlineColor);
                 }
             } else {
-                collector.submitModel(this.getParentModel(), state, poseStack, RenderTypes.entityCutout(this.getTextureLocation(state)), light, LivingEntityRenderer.getOverlayCoords(state, 0.0F), state.outlineColor, null);
+                collector.submitModel(this.getParentModel(), state, poseStack, RenderTypes.entityCutout(this.getTextureLocation(state)), light, LivingEntityRenderer.getOverlayCoords(state, 0.0F), state.outlineColor);
             }
         }
     }

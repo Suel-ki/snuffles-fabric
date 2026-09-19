@@ -29,7 +29,6 @@ public class Snuffles implements ModInitializer {
 
         SnufflesItems.addItemTooItemGroup();
 
-        SnufflesItems.registerFuelTime();
         SnufflesSpawns.registerSpawns();
         SnufflesFlammables.registerFlammables();
         SnufflesShearsDispenseItemBehavior.registerDispenserBehaviors();
